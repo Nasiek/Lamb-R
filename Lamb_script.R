@@ -67,6 +67,23 @@ nrow(Q1dataframe)
 unique(Q1dataframe$make)
 #how many unique model
 unique(Q1dataframe$model) 
-#too many. How many by each make
-
+#too many. Next, split dataset for each make and put into list
+#duplicate original dataframe
+Q1_duplicate <- Q1dataframe
+make_list <- split(Q1_duplicate, Q1_duplicate$make)
+#duplicate list
+make_list_duplicate <- make_list
+#find the rows in the top 95% of the year column of each dataframe
+#x <- rnorm(100)
+#quantile(x, probs = c(0, 0.25, 0.5, 0.75, 0.95,1))
+#y <- subset(x, Code==1)
+#break data into quantile for highest years
+head(make_list_duplicate[[1]])
+eg1 <- make_list_duplicate[[1]]
+eg1$quantiles <- cut(eg1$year , breaks=quantile(eg1$year),
+             labels=1:4, include.lowest=TRUE)
+#check the range cut offs
+tapply(eg1$year , eg1$quantiles , range)
+#and the quantile values themselves
+quantile(eg1$year)
 
