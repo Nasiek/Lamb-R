@@ -56,7 +56,7 @@ Q1vehicles[Q1vehicles$year>1999, ]
 
 #time to merge dataframes to get highway values onto model and make values
 Q1dataframe <- merge(Q1vehicles, Q1vehicles2, by="id")
-#oops remove duplicated rows :)
+#remove duplicated rows :)
 install.packages("dplyr")
 library(dplyr)
 Q1dataframe <- Q1dataframe %>% distinct
@@ -79,6 +79,34 @@ make_list_duplicate <- make_list
 #y <- subset(x, Code==1)
 #break data into quantile for highest years
 head(make_list_duplicate[[1]])
+
+#___________________
+#do this all in a forloop
+#for(i in dataList){for(j in i){print(j)}}
+options(error=recover)
+
+for(i in make_list){
+  make_list[[i]]$yr_quantile <- cut(unlist(make_list[[i]][['year']]) , breaks=quantile(make_list[[i]][['year']]),
+    labels=1:4, include.lowest=TRUE);
+  make_list[[i]]$hwy_quantile <- cut(unlist(make_list[[i]][['hwy']]) , breaks=quantile(make_list[[i]][['hwy']]),
+  labels=1:4, include.lowest=TRUE);
+  ifelse (make_list[[i]]$yr_quantiles == 4 & 
+  make_list$hwy_quantile == 4, best_car_model <- 
+    rbind(i[which.max(make_list[[i]]$hwy),],0),best_car_model) 
+}
+  for(j in i)
+#{print(head(j)}  
+#}
+
+year.column <- lapply(make_list, cut(make_list[[i]]$year , breaks=quantile(eg1$year),
+                                                      labels=1:4, include.lowest=TRUE))
+second.step <- lapply(first.step, next.function)
+The 
+
+
+
+
+
 eg1 <- make_list_duplicate[[1]]
 eg1$quantiles <- cut(eg1$year , breaks=quantile(eg1$year),
              labels=1:4, include.lowest=TRUE)
@@ -86,4 +114,24 @@ eg1$quantiles <- cut(eg1$year , breaks=quantile(eg1$year),
 tapply(eg1$year , eg1$quantiles , range)
 #and the quantile values themselves
 quantile(eg1$year)
+#Now do the same thing for the hwy miles per gallon values
+#or just subset the top years and subset that dataframe to then find the top mpg
+eg1_topyr <- eg1[eg1$quantiles == 4,] #to see the highest hwympg sort by hwy^
+#find highest hwy mpg figures
+#first get quantiles
+eg1_topyr$hwy_quantiles <- cut(eg1_topyr$year , breaks=quantile(eg1_topyr$year),
+                     labels=1:4, include.lowest=TRUE)
+#then get the values themselves
+quantile(eg1_topyr$year)
+#if both hwy quantile value and quantile value = 4, get highest hwy value
+ifelse (eg1_topyr$quantiles == 4 & eg1_topyr$hwy_quantiles == 4, acura_max <-rbind(eg1_topyr[which.max(eg1_topyr$hwy),],0),acura_max) 
+#merge to colMax dataframe when doing this with a new row
+#put above function inside an Rbind as an argument?
+acura_max <- rbind(colMax,acura_max)
+{
+  colMax <- eg1_topyr[which.max(eg1_topyr$hwy),] }
+
+#na.omit([gifts < Date_3])
+
+
 
