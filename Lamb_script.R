@@ -89,10 +89,12 @@ for (i in 1:length(uniq)){
   data_1[i] <- subset(Q1dataframe, make == uniq[i])
   data_1[i] <- data_1[i][lapply(data_1[i],length)>0]
   ##cut2!!
-  data_1[i]$yr_quantile <- cut2(as.matrix(data_1[1]$yr), 1, 4, TRUE, minmax=TRUE, oneval=TRUE, 
+  data_1[i]$yr_quantile <- cut2(as.matrix(data_1[1]$yr), 
+  1, 4, TRUE, minmax=TRUE, oneval=TRUE, 
   onlycuts=TRUE);
-  data_1[i]$hwy_quantile <- cut2(as.matrix(data_1[1]$hwy), 1, 4, TRUE, minmax=TRUE, oneval=TRUE, 
-       onlycuts=TRUE);
+  data_1[i]$hwy_quantile <- cut2(as.matrix(data_1[1]$hwy), 
+  1, 4, TRUE, minmax=TRUE, oneval=TRUE, 
+  onlycuts=TRUE);
   ##cut2 ends
   ifelse (data_1[i]$yr_quantile == 
             max(as.numeric(data_1[i]$yr_quantile)) & 
