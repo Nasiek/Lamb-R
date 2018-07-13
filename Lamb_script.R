@@ -79,6 +79,39 @@ make_list_duplicate <- make_list
 #y <- subset(x, Code==1)
 #break data into quantile for highest years
 head(make_list_duplicate[[1]])
+## trying this with the whole dataframe instead of the list
+df_list <- split(Q1dataframe, as.factor(Q1dataframe$year))#this just turns it into a list again
+#for loop
+install.packages('Hmisc')
+library(Hmisc)
+uniq <- unique(unlist(Q1dataframe$make))
+for (i in 1:length(uniq)){
+  data_1[i] <- subset(Q1dataframe, make == uniq[i])
+  data_1[i] <- data_1[i][lapply(data_1[i],length)>0]
+  ##cut2!!
+  data_1[i]$yr_quantile <- cut2(as.matrix(data_1[1]$yr), 1, 4, TRUE, minmax=TRUE, oneval=TRUE, 
+  onlycuts=TRUE);
+  data_1[i]$hwy_quantile <- cut2(as.matrix(data_1[1]$hwy), 1, 4, TRUE, minmax=TRUE, oneval=TRUE, 
+       onlycuts=TRUE);
+  ##cut2 ends
+  ifelse (data_1[i]$yr_quantile == 
+            max(as.numeric(data_1[i]$yr_quantile)) & 
+            data_1[i]$hwy_quantile == 
+            max(as.numeric(data_1[i]$yr_quantile)), 
+          best_make <-rbind(data_1[i]
+          [which.max(data_1[i]$hwy),],0),best_make) 
+  
+  #your desired function
+}
+##original cuts
+data_1[i]$yr_quantile<- cut(as.matrix(data_1[i]$year), 
+                            breaks=unique(quantile(data_1[i]$year),
+                                          labels=1:4, include.lowest=TRUE));
+data_1[i]$hwy_quantile <- cut(as.matrix(data_1[i]$hwy), 
+                              breaks=unique(quantile(data_1[i]$hwy),
+                                            labels=1:4, include.lowest=TRUE));
+##
+
 
 #___________________
 #do this all in a forloop
@@ -86,19 +119,44 @@ head(make_list_duplicate[[1]])
 options(error=recover)
 
 for(i in make_list){
-  make_list[[i]]$yr_quantile <- cut(unlist(make_list[[i]][['year']]) , breaks=quantile(make_list[[i]][['year']]),
+  make_list[[i]]['yr_quantile'] <- cut(as.data.frame(make_list)[[i]]['year'] , breaks=quantile(make_list)[[i]]['year'],
     labels=1:4, include.lowest=TRUE);
-  make_list[[i]]$hwy_quantile <- cut(unlist(make_list[[i]][['hwy']]) , breaks=quantile(make_list[[i]][['hwy']]),
+  make_list[[i]]['hwy_quantile'] <- cut(as.data.frame(make_list)[[i]]['hwy'] , breaks=quantile(make_list)[[i]]['hwy'],
   labels=1:4, include.lowest=TRUE);
-  ifelse (make_list[[i]]$yr_quantiles == 4 & 
-  make_list$hwy_quantile == 4, best_car_model <- 
-    rbind(i[which.max(make_list[[i]]$hwy),],0),best_car_model) 
+  ifelse (make_list[[i]]['yr_quantiles'] == 4 & 
+  make_list[[i]]['hwy_quantile'] == 4, best_car_model <- 
+    rbind(make_list[[i]][which.max(make_list[[i]]['hwy']),],0),best_car_model) 
 }
+
+##sample code to select columsn from a list
+myarray <- unlist(mylist, use.names = FALSE)
+dim(myarray) <- c(nrow(mylist$a), ncol(mylist$a), length(mylist))
+dimnames(myarray) <- list(hour = rownames(mylist$a),
+                           week = colnames(mylist$a),
+                           other = names(mylist)) # now you can do:
+mean(myarray[, "week1", "a"])
+# or:
+colMeans(myarray)
+
+
+listyear<- lapply(make_list, `[`, `year`)
   for(j in i)
 #{print(head(j)}  
 #}
+#make_list$[[1:length(make_list)]] <- lapply(make_list, `[`, 'year')
+make_list2 <- make_list
+listYearCols <- lapply(make_list2, `[`, 'year')
+View(listYearCols[[1]])
+listYearColQuants <- lapply(listYearCols,cut(as.numeric(listYearCols) , breaks=quantile(as.numeric(listYearCols)),
+    labels=1:4, include.lowest=TRUE))
 
-year.column <- lapply(make_list, cut(make_list[[i]]$year , breaks=quantile(eg1$year),
+
+yearQuantsList <-lapply(listYearCols, function(listYearCols) 
+      cbind(make_list2, yr_quantile = listYearCols))    
+    
+make_list <- mapply(cbind, make_list, "yr_quantile"=ID, SIMPLIFY=F)    
+    
+year.column <- lapply(make_list, cut(listYearCols , breaks=quantile(listYearCols),
                                                       labels=1:4, include.lowest=TRUE))
 second.step <- lapply(first.step, next.function)
 The 
