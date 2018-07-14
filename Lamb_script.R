@@ -81,17 +81,50 @@ make_list_duplicate <- make_list
 head(make_list_duplicate[[1]])
 ## trying this with the whole dataframe instead of the list
 df_list <- split(Q1dataframe, as.factor(Q1dataframe$year))#this just turns it into a list again
+
+##not for loop
+data_1 <- split(Q, as.factor(data$date))
+## another for loop
+
+dat <- data.frame(Q1dataframe, yr_quantile = rep(NA, nrow(Q1dataframe)))
+# iterate over group
+for(i in unique(dat$make)){
+  # check if there is a one for 
+  # each group
+  if(length(unique(dat$make)) == 4)
+    dat$yr_quantile[dat$b == i] <- cut(dat$year, breaks=quantile(dat$year),
+        labels=1:4, include.lowest=TRUE);
+  #else
+  #  dat$d[dat$b == i] <- 0
+}
+# iterate over group
+for(i in unique(dat$b)){
+  # chek if there is a one for 
+  # each group
+  if(any(dat$c[dat$b == i] == 1))
+    
+    dat$d[dat$b == i] <- 1
+  else
+    dat$d[dat$b == i] <- 0
+}
+
 #for loop
 install.packages('Hmisc')
 library(Hmisc)
 uniq <- unique(unlist(Q1dataframe$make))
-class(uniq)
+Q1dataframe_sub <- subset(Q1dataframe, make == uniq[i]);
+Q1dataframe %>% group_by(make) %>% 
+  mutate(yr_quantile = 
+  as.numeric(cut2(as.matrix(data_1$year),
+  1, 4, TRUE, minmax=TRUE, oneval=TRUE,
+  onlycuts=TRUE)));
+
 for (i in 1:length(uniq)){
   data_1[[i]] <- subset(Q1dataframe, make == uniq[i]);
 #  data_1[i] <- data_1[i][lapply(data_1[i],length)>0]
-  data_1[[i]] <- sapply(data_1[i], function(x) length(unique(data_1[[i]])) >3);
+  data_1[[i]] <- sapply(data_1[i], function(x) length(unique(data_1[[i]])) > 3);
   ##cut2!!
-  data_1[[i]]$yr_quantile <- cut2(as.matrix(data_1[[i]]$yr), 
+  data_1[[i]]$yr_quantile <- cut2(as.matrix(data_1[[i]]$year), 
                                 1, 4, TRUE, minmax=TRUE, oneval=TRUE, 
                                 onlycuts=TRUE);
   data_1[[i]]$hwy_quantile <- cut2(as.matrix(data_1[[i]]$hwy), 
