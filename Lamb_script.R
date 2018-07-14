@@ -91,11 +91,12 @@ dat <- data.frame(Q1dataframe, yr_quantile = rep(NA, nrow(Q1dataframe)))
 for(i in unique(dat$make)){
   # check if there is a one for 
   # each group
-  if(length(unique(dat$make)) == 4)
-    dat$yr_quantile[dat$b == i] <- cut(dat$year, breaks=quantile(dat$year),
-        labels=1:4, include.lowest=TRUE);
-  #else
-  #  dat$d[dat$b == i] <- 0
+  if(any(length(unique(dat$make == i)) >= 4))
+    dat$yr_quantile[dat$make == i] <- 100
+    #dat$yr_quantile[dat$b == i] <- cut(dat$year, breaks=quantile(dat$year),
+    #    labels=1:4, include.lowest=TRUE);
+  else
+    dat$yr_quantile[dat$make == i] <- 0
 }
 # iterate over group
 for(i in unique(dat$b)){
