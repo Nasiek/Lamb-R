@@ -85,23 +85,23 @@ df_list <- split(Q1dataframe, as.factor(Q1dataframe$year))#this just turns it in
 install.packages('Hmisc')
 library(Hmisc)
 uniq <- unique(unlist(Q1dataframe$make))
+class(uniq)
 for (i in 1:length(uniq)){
-  data_1[i] <- subset(Q1dataframe, make == uniq[i])
-  data_1[i] <- data_1[i][lapply(data_1[i],length)>0]
+  data_1[[i]] <- subset(Q1dataframe, make == uniq[i]);
+#  data_1[i] <- data_1[i][lapply(data_1[i],length)>0]
+  data_1[[i]] <- sapply(data_1[i], function(x) length(unique(data_1[[i]])) >3);
   ##cut2!!
-  data_1[i]$yr_quantile <- cut2(as.matrix(data_1[1]$yr), 
-  1, 4, TRUE, minmax=TRUE, oneval=TRUE, 
-  onlycuts=TRUE);
-  data_1[i]$hwy_quantile <- cut2(as.matrix(data_1[1]$hwy), 
-  1, 4, TRUE, minmax=TRUE, oneval=TRUE, 
-  onlycuts=TRUE);
+  data_1[[i]]$yr_quantile <- cut2(as.matrix(data_1[[i]]$yr), 
+                                1, 4, TRUE, minmax=TRUE, oneval=TRUE, 
+                                onlycuts=TRUE);
+  data_1[[i]]$hwy_quantile <- cut2(as.matrix(data_1[[i]]$hwy), 
+                                 1, 4, TRUE, minmax=TRUE, oneval=TRUE, 
+                                 onlycuts=TRUE);
   ##cut2 ends
-  ifelse (data_1[i]$yr_quantile == 
-            max(as.numeric(data_1[i]$yr_quantile)) & 
-            data_1[i]$hwy_quantile == 
-            max(as.numeric(data_1[i]$yr_quantile)), 
-          best_make <-rbind(data_1[i]
-          [which.max(data_1[i]$hwy),],0),best_make) 
+  ifelse (data_1[[i]]$yr_quantile == 4 & 
+            data_1[[i]]$hwy_quantile == 4, 
+          best_make <-rbind(data_1[[i]]
+          [which.max(data_1[[i]]$hwy),],0),best_make); 
   
   #your desired function
 }
@@ -113,6 +113,14 @@ data_1[i]$hwy_quantile <- cut(as.matrix(data_1[i]$hwy),
                               breaks=unique(quantile(data_1[i]$hwy),
                                             labels=1:4, include.lowest=TRUE));
 ##
+##cut2!!swap out
+data_1[i]$yr_quantile <- cut2(as.matrix(data_1[i]$yr), 
+                              1, 4, TRUE, minmax=TRUE, oneval=TRUE, 
+                              onlycuts=TRUE);
+data_1[i]$hwy_quantile <- cut2(as.matrix(data_1[i]$hwy), 
+                               1, 4, TRUE, minmax=TRUE, oneval=TRUE, 
+                               onlycuts=TRUE);
+##cut2 ends
 
 
 #___________________
