@@ -87,7 +87,7 @@ install.packages("plyr")
 library("plyr")
 Q1_duplicate2 <- Q1_duplicate
 dat <- data.frame(Q1dataframe, 
-yr_quantile = rep(NA, nrow(Q1dataframe)))
+model_count = rep(NA, nrow(Q1_duplicate2)))
 
 ddply(dat,~make,summarise,
 dat$model_count <- length(unique(model)))
@@ -99,6 +99,20 @@ for (i in unique(dat$make)){
 else 
   dat$yr_quantile[dat$model == i] <- 0
 }
+
+#aggregate
+aggregate(model ~ make, data = dat, sum)
+aggregate(. ~ color, csv, sum)
+install.packages("magrittr")
+library(dplyr)
+library(magrittr)
+
+dat %>% group_by(make) %>% summarise_each(funs(sum))
+dat$tally <- 
+   dat %>% group_by(make,model) %>% tally()
+
+dat %>% group_by(make) %>% 
+mutate(model_count = (any(length(unique(model) >= 4))) <- 1)
 
 
 for(i in unique(dat$make)){
