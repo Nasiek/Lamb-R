@@ -82,8 +82,40 @@ head(make_list_duplicate[[1]])
 ## trying this with the whole dataframe instead of the list
 df_list <- split(Q1dataframe, as.factor(Q1dataframe$year))#this just turns it into a list again
 
+##plyr obsolte? type of loop
+install.packages("plyr")
+library("plyr")
+Q1_duplicate2 <- Q1_duplicate
+dat <- data.frame(Q1dataframe, 
+yr_quantile = rep(NA, nrow(Q1dataframe)))
+
+ddply(dat,~make,summarise,
+dat$model_count <- length(unique(model)))
+for (i in unique(dat$make)){
+  ddply(dat,~make,summarise,
+        dat$model_count <- length(unique(model)))
+  if(dat$model_count >= 4)
+  dat$yr_quantile[dat$model ==i] <- 100
+else 
+  dat$yr_quantile[dat$model == i] <- 0
+}
+
+
+for(i in unique(dat$make)){
+  # check if there is a one for 
+  # each group
+  if(length(unique(dat$model == i)) >= 4)
+    dat$yr_quantile[dat$make == i] <- 100
+  #dat$yr_quantile[dat$b == i] <- cut(dat$year, breaks=quantile(dat$year),
+  #    labels=1:4, include.lowest=TRUE);
+  else
+    dat$yr_quantile[dat$make == i] <- 0
+}
+
+
 ##not for loop
-data_1 <- split(Q, as.factor(data$date))
+d_duplicate <- split(Q1_duplicate, as.factor(Q1_duplicate$make))
+
 ## another for loop
 
 dat <- data.frame(Q1dataframe, yr_quantile = rep(NA, nrow(Q1dataframe)))
@@ -91,7 +123,7 @@ dat <- data.frame(Q1dataframe, yr_quantile = rep(NA, nrow(Q1dataframe)))
 for(i in unique(dat$make)){
   # check if there is a one for 
   # each group
-  if(any(length(unique(dat$make == i)) >= 4))
+  if(length(unique(dat$model == i)) >= 4)
     dat$yr_quantile[dat$make == i] <- 100
     #dat$yr_quantile[dat$b == i] <- cut(dat$year, breaks=quantile(dat$year),
     #    labels=1:4, include.lowest=TRUE);
